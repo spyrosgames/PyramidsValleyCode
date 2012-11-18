@@ -1,7 +1,6 @@
 #pragma strict
 
 public var PlayerRedHealthbar : GUITexture;
-
 private var healthObj : Health;
 private var health : float;
 private var maxHealth : float;

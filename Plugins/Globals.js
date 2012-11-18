@@ -2,8 +2,8 @@ class Globals
 {
 	public var enemiesKilled : int;
 	public var callInstantiate : boolean;
-	public var XPPoints : int;
-	public var XPMaximum : int;
+	public var XPPoints : float;
+	public var XPMaximum : float;
 	public var mana : float;
 	public var manaMaximum : float;
 	public var manaRegenerationSpeed : float;
@@ -14,9 +14,16 @@ class Globals
 	public var meleeEnemyDamage : float;
 	public var rangedEnemyDamage : float;
 	public var playerBulletDamage : float;
+	
+	public var meleeEnemyAIStoppingDistance : float;
+	public var rangedEnemyAIStoppingDistance : float;
+	
 	public var level : int;
 	public var coins : int = 10;
 	public var jewels : int = 10;
+	
+	public var healthPotionsNumber : int;
+	public var manaPotionsNumber : int;
 	
 	public var playerWalkingSpeed : float;
 	public var playerShootingFrequency : float;
@@ -47,21 +54,31 @@ class Globals
 		enemiesKilled = 0;
 		callInstantiate = true;
 		lives = 3;
-		XPPoints = PlayerPrefs.GetInt("XP");
-		XPMaximum = PlayerPrefs.GetInt("XPMaximum");
+		XPPoints = PlayerPrefs.GetFloat("XP");
+		XPMaximum = PlayerPrefs.GetFloat("XPMaximum");
 		manaMaximum = PlayerPrefs.GetFloat("manaMaximum");
 		manaRegenerationSpeed = PlayerPrefs.GetFloat("manaRegenerationSpeed");
 		magicCoolDown = PlayerPrefs.GetFloat("magicCoolDown");
 		playerMaxHealth = PlayerPrefs.GetFloat("playerMaxHealth");
-		meleeEnemyMaxHealth = PlayerPrefs.GetFloat("meleeEnemyMaxHealth");
-		rangedEnemyMaxHealth = PlayerPrefs.GetFloat("rangedEnemyMaxHealth");
-		meleeEnemyDamage = PlayerPrefs.GetFloat("meleeEnemyDamage");
-		rangedEnemyDamage = PlayerPrefs.GetFloat("rangedEnemyDamage");
+		
+		meleeEnemyMaxHealth = 20;
+		rangedEnemyMaxHealth = 20;
+		
+		meleeEnemyDamage = 1;
+		rangedEnemyDamage = 5;
+		
 		playerWalkingSpeed = PlayerPrefs.GetFloat("playerWalkingSpeed");
 		playerBulletDamage = PlayerPrefs.GetFloat("playerBulletDamage");
 		playerShootingFrequency = PlayerPrefs.GetFloat("playerShootingFrequency");
 		playerHealthRegenerationSpeed = PlayerPrefs.GetFloat("playerHealthRegenerationSpeed");
+		healthPotionsNumber = PlayerPrefs.GetInt("healthPotionsNumber");
+		manaPotionsNumber = PlayerPrefs.GetInt("manaPotionsNumber");
+		
 		level = PlayerPrefs.GetInt("Level");
+		
+		meleeEnemyAIStoppingDistance = 4;
+		rangedEnemyAIStoppingDistance = 8;
+		
 	}
 	
 	public static function GetInstance() : Globals

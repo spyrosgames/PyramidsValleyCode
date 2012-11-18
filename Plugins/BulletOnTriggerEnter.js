@@ -3,12 +3,27 @@
 private var damagePerSecond : float;
 private var frequency : float;
 private var spawnPoint : Transform;
+private var globals = Globals.GetInstance();
 
 function Awake()
 {
-
-	damagePerSecond = 7.5;
-	frequency = 3;
+	globals = Globals.GetInstance();
+	
+	damagePerSecond = globals.playerBulletDamage;
+	frequency = globals.playerShootingFrequency;
+	
+	if(damagePerSecond == 0)
+	{
+		damagePerSecond = 7.5;
+		globals.playerBulletDamage = 7.5;
+		PlayerPrefs.SetFloat("playerBulletDamage", damagePerSecond);
+	}
+	if(frequency == 0)
+	{
+		frequency = 3;
+		globals.playerShootingFrequency = 3;
+		PlayerPrefs.SetFloat("playerShootingFrequency", 3);
+	}
 }
 
 

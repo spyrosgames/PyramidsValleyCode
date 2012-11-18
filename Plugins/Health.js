@@ -55,7 +55,7 @@ function Awake () {
 		{
 			maxHealth = 20;
 			globals.meleeEnemyMaxHealth = 20;
-			PlayerPrefs.SetInt("meleeEnemyMaxHealth", 20);
+			//PlayerPrefs.SetInt("meleeEnemyMaxHealth", 20);
 		}
 	}
 	if(this.transform.name == "RangedEnemy")
@@ -65,7 +65,7 @@ function Awake () {
 		{
 			maxHealth = 20;
 			globals.rangedEnemyMaxHealth = 20;
-			PlayerPrefs.SetInt("rangedEnemyMaxHealth", 20);
+			//PlayerPrefs.SetInt("rangedEnemyMaxHealth", 20);
 		}
 	}
 	
@@ -88,6 +88,7 @@ function Awake () {
 		scorchMark.active = false;
 	}
 }
+
 
 function OnDamage (amount : float, fromDirection : Vector3) {
 	Debug.Log("Calling OnDamage");
@@ -168,6 +169,7 @@ function OnDamage (amount : float, fromDirection : Vector3) {
 }
 
 function OnEnable () {
+	
 	if(this.transform.tag == "Player")
 	{
 		Regenerate ();

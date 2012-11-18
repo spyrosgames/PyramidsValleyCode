@@ -14,7 +14,7 @@ private var ai : AI;
 
 private var character : Transform;
 
-private var player : Transform;
+private var player : GameObject;
 private var playerHealth : Health;
 
 private var inRange : boolean = false;
@@ -30,7 +30,7 @@ private var nextWeaponToFire : int = 0;
 
 private var playerDirection : Vector3;
 
-private var currentCharacterToAttack : Transform;
+private var currentCharacterToAttack : GameObject;
 
 public var damagePerSecond : float;
 public var forcePerSecond : float = 5.0;
@@ -42,6 +42,7 @@ public var idleAnimation : AnimationClip;
 
 public var enemyBody : GameObject;
 private var globals : Globals;
+private var currentAttackAnimation : AnimationClip;
 
 function Awake () {
 	globals = Globals.GetInstance();
@@ -51,11 +52,11 @@ function Awake () {
 	{
 		damagePerSecond = 1;
 		globals.meleeEnemyDamage = 1;
-		PlayerPrefs.SetFloat("meleeEnemyDamage", damagePerSecond);
+		//PlayerPrefs.SetFloat("meleeEnemyDamage", damagePerSecond);
 	}
 	
 	character = motor.transform;
-	player = GameObject.FindWithTag ("Player").transform;
+	player = GameObject.FindWithTag ("Player");
 	playerHealth = player.GetComponent.<Health>();
 	ai = transform.parent.GetComponentInChildren.<AI> ();
 }
@@ -77,13 +78,12 @@ function Shoot(state : boolean) {
 
 function Fire () {
 	PlayAttackAnimation();
-	
+
 	var targetHealth : Health = currentCharacterToAttack.transform.GetComponent.<Health> ();
 	if (targetHealth) {
 		// Apply damage
 		targetHealth.OnDamage (damagePerSecond, -currentCharacterToAttack.transform.forward);
 	}
-	
 	/*
 		// Get the rigidbody if any
 	if (currentCharacterToAttack.rigidbody) {
@@ -97,7 +97,7 @@ function Fire () {
 
 function Update () {
 	// Calculate the direction from the player to this character
-	playerDirection = (player.position - character.position);
+	playerDirection = (player.transform.position - character.position);
 
 	playerDirection.y = 0;
 
@@ -152,9 +152,6 @@ function Update () {
 			else {
 				Shoot (false);
 				//enemyBody.animation.CrossFadeQueued(idleAnimation.name, 0, QueueMode.CompleteOthers);
-				if (Time.time > lastRaycastSuccessfulTime + 5) {
-					ai.OnLostTrack ();
-				}
 			}
 	//}
 	
@@ -162,42 +159,30 @@ function Update () {
 		if(playerHealth.health > 0 && transform.parent.GetComponent.<Health>().health > 0)
 		{
 			if (Time.time > lastFireTime + 1 / fireFrequency) {
+				
 				Fire ();
 			}
 			else
 			{
-				enemyBody.animation.CrossFadeQueued(idleAnimation.name, 0, QueueMode.CompleteOthers);
+				enemyBody.animation.CrossFadeQueued(idleAnimation.name, 0);
 			}
 		}
 		else
 		{
-			enemyBody.animation.CrossFadeQueued(idleAnimation.name, 0, QueueMode.CompleteOthers);
+			enemyBody.animation.CrossFadeQueued(idleAnimation.name, 0);
 		}
 	}
 }
 function SmoothLookAt()
 {
-	//var rotation = Quaternion.LookRotation(player.position - character.position);
-	//character.rotation = Quaternion.Slerp(character.rotation, rotation, Time.deltaTime * 6);
-
 	var lookAtPlayer = Quaternion.LookRotation(player.transform.position - motor.transform.position);
     motor.transform.rotation = Quaternion.Slerp(motor.transform.rotation, lookAtPlayer , Time.deltaTime / 5);
 }
 
-function IsAimingAtPlayer () : boolean {
-	//transform.parent.transform.LookAt(Vector3(player.transform.position.x, transform.parent.transform.position.y, player.transform.position.z));
-	/*
-	var playerDirection : Vector3 = (player.position - character.transform.position);
-	playerDirection.y = 0;
-	if(Vector3.Angle (character.transform.forward, playerDirection) < 1)
-	{
-		return true;
-	}
-	*/
-	
+function IsAimingAtPlayer () : boolean {	
 	var distance : float = Vector3.Distance(player.transform.position, character.transform.position);
 	
-	if(distance < 4)
+	if(distance < globals.meleeEnemyAIStoppingDistance)
 	{
 		return true;
 	}
@@ -207,25 +192,32 @@ function IsAimingAtPlayer () : boolean {
 
 function PlayAttackAnimation()
 {
-	var randomAnimation : int = Random.Range(0, 2);
-	var currentAttackAnimation : AnimationClip = strike1Animation;
-	//enemyBody.animation[currentAttackAnimation.name].blendMode = AnimationBlendMode.Blend;
-	var animationSpeed : float;
-
-
-	if(randomAnimation == 0)
-	{
-		currentAttackAnimation = strike1Animation;
-		animationSpeed = 0.9;
-		//animationSpeed = 1.2;
-
-	}
-	else if(randomAnimation == 1)
-	{
-		currentAttackAnimation = strike2Animation;
-		animationSpeed = 0.95;
-		//animationSpeed = 1.25;
-	}
+		if(player.rigidbody.velocity == Vector3(0, 0, 0))
+		{
+		var randomAnimation : int = Random.Range(0, 2);
+		currentAttackAnimation = strike1Animation; //default value
+		//enemyBody.animation[currentAttackAnimation.name].blendMode = AnimationBlendMode.Blend;
+		var animationSpeed : float;
+	
+	
+		if(randomAnimation == 0)
+		{
+			currentAttackAnimation = strike1Animation;
+			animationSpeed = 0.9;
+			//animationSpeed = 1.2;
+		}
+		else if(randomAnimation == 1)
+		{
+			currentAttackAnimation = strike2Animation;
+			animationSpeed = 0.95;
+			//animationSpeed = 1.25;
+		}
+		}
+		if(player.rigidbody.velocity != Vector3(0, 0, 0))
+		{
+			currentAttackAnimation = strike1Animation;
+			animationSpeed = 0.9;
+		}
 
 	enemyBody.animation.CrossFade(currentAttackAnimation.name, 0, PlayMode.StopAll);
 	enemyBody.animation[currentAttackAnimation.name].speed = animationSpeed;

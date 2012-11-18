@@ -36,7 +36,10 @@ private var enemyCheckPoint12 : Transform;
 private var enemyCheckPoint13 : Transform;
 private var enemyCheckPoint14 : Transform;
 private var enemyCheckPoint15 : Transform;
-
+private var enemyCheckPoint16 : Transform;
+private var enemyCheckPoint17 : Transform;
+private var enemyCheckPoint18 : Transform;
+private var enemyCheckPoint19 : Transform;
 
 private var enemyCheckPointArray : Transform[];
 
@@ -72,6 +75,10 @@ function Awake()
 	enemyCheckPoint13 = GameObject.FindWithTag("EnemyCheckpoint13").transform;
 	enemyCheckPoint14 = GameObject.FindWithTag("EnemyCheckpoint14").transform;
 	enemyCheckPoint15 = GameObject.FindWithTag("EnemyCheckpoint15").transform;
+	enemyCheckPoint16 = GameObject.FindWithTag("EnemyCheckpoint16").transform;
+	enemyCheckPoint17 = GameObject.FindWithTag("EnemyCheckpoint17").transform;
+	enemyCheckPoint18 = GameObject.FindWithTag("EnemyCheckpoint18").transform;
+	enemyCheckPoint19 = GameObject.FindWithTag("EnemyCheckpoint19").transform;
 
 
 	//enemyCheckPointArray = [enemyCheckPoint1, enemyCheckPoint2, enemyCheckPoint3, enemyCheckPoint4, enemyCheckPoint5];
@@ -96,7 +103,7 @@ function OnDamageSignal () {
     {
 		XPLabel = Spawner.Spawn(OneXPLabelToSpawn, Vector3(screenPosition.x / 480, screenPosition.y / 320, 0), transform.rotation);
 		globals.XPPoints += 1;
-		PlayerPrefs.SetInt("XP", globals.XPPoints);
+		PlayerPrefs.SetFloat("XP", globals.XPPoints);
 	}
 	else if(this.transform.parent.gameObject.name == "MediumRangedEnemy" || this.transform.parent.gameObject.name == "MediumMeleeEnemy")
 	{
@@ -119,7 +126,7 @@ function OnDamageSignal () {
 		yield WaitForSeconds(0.9583335); //Length of the die animation
 
 		var enemyCheckPointArray : Transform[] = CheckPlayerPosition();
-		var resetCheckPoint : Transform = enemyCheckPointArray[Random.Range(0, 8)];
+		var resetCheckPoint : Transform = enemyCheckPointArray[Random.Range(0, 9)];
 		/*
 		var resetCheckPoint : Transform;
 
@@ -273,9 +280,10 @@ function CheckPlayerPosition() : Transform[]
 
 	var verticalDist : float = Vector3.Distance(enemyCheckPoint1.position, enemyCheckPoint2.position);
 
-	var enemyCheckPoints : Transform[] = new Transform[7];
+	var enemyCheckPoints : Transform[] = new Transform[9];
 
-	enemyCheckPoints = [enemyCheckPoint5, enemyCheckPoint5, enemyCheckPoint5, enemyCheckPoint5, enemyCheckPoint5, enemyCheckPoint5, enemyCheckPoint5, enemyCheckPoint5];
+	//Just an initial value for the checkpoints array
+	enemyCheckPoints = [enemyCheckPoint5, enemyCheckPoint5, enemyCheckPoint5, enemyCheckPoint5, enemyCheckPoint5, enemyCheckPoint5, enemyCheckPoint5, enemyCheckPoint5, enemyCheckPoint5, enemyCheckPoint5];
 
 	if(firstCheckPointDist < horizontalDist * 0.5)
 	{
@@ -285,6 +293,18 @@ function CheckPlayerPosition() : Transform[]
 	{
 		enemyCheckPoints[0] = enemyCheckPoint4;
 	}
+	else
+	{
+		var checkPointChance = Random.Range(0, 2);
+		if(checkPointChance == 0)
+		{
+			enemyCheckPoints[0] = enemyCheckPoint3;
+		}
+		if(checkPointChance == 1)
+		{
+			enemyCheckPoints[0] = enemyCheckPoint4;
+		}
+	}
 
 	if(thirdCheckPointDist < verticalDist * 0.5)
 	{
@@ -293,6 +313,18 @@ function CheckPlayerPosition() : Transform[]
 	else if(fourthCheckPointDist < verticalDist * 0.5)
 	{
 		enemyCheckPoints[1] = enemyCheckPoint2;
+	}
+	else
+	{
+		var checkPointChance2 = Random.Range(0, 2);
+		if(checkPointChance2 == 0)
+		{
+			enemyCheckPoints[0] = enemyCheckPoint3;
+		}
+		if(checkPointChance2 == 1)
+		{
+			enemyCheckPoints[0] = enemyCheckPoint4;
+		}
 	}
 
 	if(enemyCheckPoints[0] == enemyCheckPoint3 && enemyCheckPoints[1] == enemyCheckPoint1)
@@ -340,7 +372,26 @@ function CheckPlayerPosition() : Transform[]
 		else
 		{
 			enemyCheckPoints[6] = enemyCheckPoint7;
-		}		
+		}
+		
+		if(enemyCheckPoint16.GetComponent.<PlayerInArea>().playerInArea == false)
+		{
+			enemyCheckPoints[7] = enemyCheckPoint16;
+		}	
+		else
+		{
+			enemyCheckPoints[7] = enemyCheckPoint17;
+		}
+		
+		if(enemyCheckPoint17.GetComponent.<PlayerInArea>().playerInArea == false)
+		{
+			enemyCheckPoints[8] = enemyCheckPoint17;
+		}	
+		else
+		{
+			enemyCheckPoints[8] = enemyCheckPoint16;
+		}
+		
 	}
 	
 	else if(enemyCheckPoints[0] == enemyCheckPoint3 && enemyCheckPoints[1] == enemyCheckPoint2)
@@ -388,6 +439,24 @@ function CheckPlayerPosition() : Transform[]
 		else
 		{
 			enemyCheckPoints[6] = enemyCheckPoint8;
+		}
+		
+		if(enemyCheckPoint18.GetComponent.<PlayerInArea>().playerInArea == false)
+		{
+			enemyCheckPoints[7] = enemyCheckPoint18;
+		}	
+		else
+		{
+			enemyCheckPoints[7] = enemyCheckPoint19;
+		}
+		
+		if(enemyCheckPoint19.GetComponent.<PlayerInArea>().playerInArea == false)
+		{
+			enemyCheckPoints[8] = enemyCheckPoint19;
+		}	
+		else
+		{
+			enemyCheckPoints[8] = enemyCheckPoint18;
 		}
 		
 	}
@@ -438,6 +507,24 @@ function CheckPlayerPosition() : Transform[]
 			enemyCheckPoints[6] = enemyCheckPoint10;
 		}
 		
+		if(enemyCheckPoint16.GetComponent.<PlayerInArea>().playerInArea == false)
+		{
+			enemyCheckPoints[7] = enemyCheckPoint16;
+		}	
+		else
+		{
+			enemyCheckPoints[7] = enemyCheckPoint17;
+		}
+		
+		if(enemyCheckPoint17.GetComponent.<PlayerInArea>().playerInArea == false)
+		{
+			enemyCheckPoints[8] = enemyCheckPoint17;
+		}	
+		else
+		{
+			enemyCheckPoints[8] = enemyCheckPoint16;
+		}
+		
 	}
 	else if(enemyCheckPoints[0] == enemyCheckPoint4 && enemyCheckPoints[1] == enemyCheckPoint2)
 	{
@@ -485,6 +572,37 @@ function CheckPlayerPosition() : Transform[]
 		{
 			enemyCheckPoints[6] = enemyCheckPoint13;
 		}
+		
+		if(enemyCheckPoint18.GetComponent.<PlayerInArea>().playerInArea == false)
+		{
+			enemyCheckPoints[7] = enemyCheckPoint18;
+		}	
+		else
+		{
+			enemyCheckPoints[7] = enemyCheckPoint19;
+		}
+		
+		if(enemyCheckPoint19.GetComponent.<PlayerInArea>().playerInArea == false)
+		{
+			enemyCheckPoints[8] = enemyCheckPoint19;
+		}	
+		else
+		{
+			enemyCheckPoints[8] = enemyCheckPoint18;
+		}
+		
+	}
+	else
+	{
+		enemyCheckPoints[0] = enemyCheckPoint1;
+		enemyCheckPoints[1] = enemyCheckPoint2;
+		enemyCheckPoints[2] = enemyCheckPoint3;
+		enemyCheckPoints[3] = enemyCheckPoint4;
+		enemyCheckPoints[4] = enemyCheckPoint5;
+		enemyCheckPoints[5] = enemyCheckPoint14;
+		enemyCheckPoints[6] = enemyCheckPoint15;
+		enemyCheckPoints[7] = enemyCheckPoint16;
+		enemyCheckPoints[8] = enemyCheckPoint18;
 	}
 	return enemyCheckPoints;
 }

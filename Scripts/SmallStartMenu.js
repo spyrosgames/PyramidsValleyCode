@@ -11,20 +11,20 @@ public var scaredGround : GameObject;
 public var GesturesRecognizer : GameObject;
 public var GesturesCamera : GameObject;
 
-public var PlayerHealthBarObject : GameObject;
-public var XPBarObject : GameObject;
-public var ManaBarObject : GameObject;
-
 public var JoystickLeftTexture : GameObject;
 public var JoystickRightTexture : GameObject;
 
+public var HUDs : GameObject;
+
 private var magicsManaTable : MagicsManaTable;
+private var globals : Globals;
 //public var tempEnemy : GameObject;
 //public var magicMeter : GameObject;
 
 function Awake()
 {
-	//PlayerPrefs.DeleteAll();
+	PlayerPrefs.DeleteAll();
+	globals = Globals.GetInstance();
 	//guiTexture.pixelInset = Rect(Screen.width * 0.5 - 128, Screen.height * 0.5 - 64, 256, 128);
 }
 
@@ -47,6 +47,7 @@ function Update () {
 			// the title graphic
 			if(touch.phase == TouchPhase.Began && guiTexture.HitTest(touch.position))
 			{
+				
 				//TODO: Refactor
 				PlayerPrefs.SetString("Magic0", "HolyFire");
         		PlayerPrefs.SetString("Magic1", "Crowstorm");
@@ -63,6 +64,13 @@ function Update () {
 				magicsManaTable.AddMagicManaAmount("Starfall", 40);
 				magicsManaTable.AddMagicManaAmount("LightningStrike", 50);
 				magicsManaTable.AddMagicManaAmount("Shake", 50);
+				
+				PlayerPrefs.SetInt("healthPotionsNumber", 3);
+				globals.healthPotionsNumber = 3;
+				
+				PlayerPrefs.SetInt("manaPotionsNumber", 3);
+				globals.manaPotionsNumber = 3;
+				
 				//
 				
 				guiTexture.enabled = false;
@@ -80,11 +88,11 @@ function Update () {
 				scaredGround.transform.parent = Player.transform;
 
 				//LivesHearts.SetActiveRecursively(true);
-				PlayerHealthBarObject.SetActiveRecursively(true);
-				XPBarObject.SetActiveRecursively(true);
-				ManaBarObject.SetActiveRecursively(true);
-				JoystickRightTexture.active = true;
-				JoystickLeftTexture.active = true;
+
+				//JoystickRightTexture.active = true;
+				//JoystickLeftTexture.active = true;
+				
+				HUDs.SetActiveRecursively(true);
 				EnemiesWaves.active = true;
 
 				

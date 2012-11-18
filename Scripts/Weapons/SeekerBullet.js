@@ -21,6 +21,13 @@ private var globals : Globals;
 function Awake()
 {
 	globals = Globals.GetInstance();
+	damageAmount = globals.rangedEnemyDamage;
+	if(damageAmount == 0)
+	{
+		damageAmount = 5;
+		globals.rangedEnemyDamage = 5;
+		PlayerPrefs.SetFloat("rangedEnemyDamage", 5);
+	}
 	targetObject = GameObject.FindWithTag ("Player");
 }
 
@@ -55,25 +62,29 @@ function Update () {
 	var hits : Collider[] = Physics.OverlapSphere (tr.position, radius, ~ignoreLayers.value);
 	var collided : boolean = false;
 	for (var c : Collider in hits) {
-		// Don't collide with triggers
-		if (c.isTrigger)
-			continue;
-		
-		var targetHealth : Health = c.GetComponent.<Health> ();
-		if (targetHealth) {
-			// Apply damage
-			targetHealth.OnDamage (damageAmount, -tr.forward);
+		if(c.gameObject.name == "Player")
+		{
+			// Don't collide with triggers
+			if (c.isTrigger)
+			{
+				continue;
+			}
+			var targetHealth : Health = c.GetComponent.<Health> ();
+			if (targetHealth) {
+				// Apply damage
+				targetHealth.OnDamage (damageAmount, -tr.forward);
+			}
+			/*
+			// Get the rigidbody if any
+			if (c.rigidbody) {
+				// Apply force to the target object
+				var force : Vector3 = tr.forward * forceAmount;
+				force.y = 0;
+				c.rigidbody.AddForce (force, ForceMode.Impulse);
+			}
+			*/
+			collided = true;
 		}
-		/*
-		// Get the rigidbody if any
-		if (c.rigidbody) {
-			// Apply force to the target object
-			var force : Vector3 = tr.forward * forceAmount;
-			force.y = 0;
-			c.rigidbody.AddForce (force, ForceMode.Impulse);
-		}
-		*/
-		collided = true;
 	}
 	if (collided) {
 		Spawner.Destroy (gameObject);
