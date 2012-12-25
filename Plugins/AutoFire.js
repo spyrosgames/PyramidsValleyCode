@@ -25,12 +25,14 @@ function Awake () {
 	//muzzleFlashFront.active = false;
 	damagePerSecond = globals.playerBulletDamage;
 	frequency = globals.playerShootingFrequency;
+	/*
 	if(damagePerSecond == 0)
 	{
 		damagePerSecond = 7.5;
 		globals.playerBulletDamage = 7.5;
 		PlayerPrefs.SetFloat("playerBulletDamage", damagePerSecond);
 	}
+	*/
 	if(frequency == 0)
 	{
 		frequency = 3;
@@ -54,9 +56,10 @@ function Update () {
 			
 			lastFireTime = Time.time;
 			
+			/*
 			// Find the object hit by the raycast
 			var hitInfo : RaycastHit = raycast.GetHitInfo ();
-			if (hitInfo.transform) {
+			if (hitInfo.transform && hitInfo.transform != null && hitInfo.transform.tag == "Enemy") {
 				// Get the health component of the target if any
 				var targetHealth : Health = hitInfo.transform.GetComponent.<Health> ();
 				if (targetHealth && targetHealth.health > 0 && targetHealth.dead == false) {
@@ -82,6 +85,7 @@ function Update () {
 			else {
 				bullet.dist = 1000;
 			}
+			*/
 		}
 	}
 }

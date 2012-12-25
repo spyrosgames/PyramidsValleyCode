@@ -75,21 +75,31 @@ function Awake () {
 			joystickRightGO = Instantiate (joystickPrefab) as GameObject;
 			joystickRightGO.name = "Joystick Right";
 			joystickRight = joystickRightGO.GetComponent.<Joystick> ();	
-
+			
+			joystickLeftGOGUITexture = joystickLeftGO.GetComponent.<GUITexture>();
+			joystickRightGOGUITexture = joystickRightGO.GetComponent.<GUITexture>();
+			
+			
 			gesturesLockLeftTexture.transform.parent = joystickLeftGO.transform;
 			gesturesLockRightTexture.transform.parent = joystickRightGO.transform;
-
+			
+			
 			gesturesLockLeftTextureGUITexture = gesturesLockLeftTexture.GetComponent.<GUITexture>();
 			gesturesLockRightTextureGUITexture = gesturesLockRightTexture.GetComponent.<GUITexture>();
 
-			joystickLeftGOGUITexture = joystickLeftGO.GetComponent.<GUITexture>();
-			joystickRightGOGUITexture = joystickRightGO.GetComponent.<GUITexture>();
-
+			
+			/*
 			gesturesLockLeftTextureGUITexture.pixelInset.width = 190;
 			gesturesLockLeftTextureGUITexture.pixelInset.height = 160;
 
 			gesturesLockRightTextureGUITexture.pixelInset.width = 190;
 			gesturesLockRightTextureGUITexture.pixelInset.height = 160;
+			*/
+			gesturesLockLeftTextureGUITexture.pixelInset.width = Screen.width * 0.4;
+			gesturesLockLeftTextureGUITexture.pixelInset.height = Screen.height * 0.45;
+
+			gesturesLockRightTextureGUITexture.pixelInset.width = Screen.width * 0.4;
+			gesturesLockRightTextureGUITexture.pixelInset.height = Screen.height * 0.45;
 		}
 	#else
 		if (cursorPrefab) {
@@ -131,22 +141,30 @@ function OnDisable () {
 
 function OnEnable () {
 	if (joystickLeft) 
-		joystickLeft.enabled = true;
+		joystickLeft.enabled = true;  
 	
 	if (joystickRight)
-		joystickRight.enabled = true;
+		joystickRight.enabled = true; 
 }
 
 function Update () {
 	// HANDLE CHARACTER MOVEMENT DIRECTION
 	#if UNITY_IPHONE || UNITY_ANDROID
 		motor.movementDirection = joystickLeft.position.x * screenMovementRight + joystickLeft.position.y * screenMovementForward;
+		/*
 		gesturesLockLeftTextureGUITexture.pixelInset.x = joystickLeftGOGUITexture.pixelInset.x - 30;
 		gesturesLockLeftTextureGUITexture.pixelInset.y = joystickLeftGOGUITexture.pixelInset.y - 30;
 
 		gesturesLockRightTextureGUITexture.pixelInset.x = joystickRightGOGUITexture.pixelInset.x -60;
 		gesturesLockRightTextureGUITexture.pixelInset.y = joystickRightGOGUITexture.pixelInset.y - 30;
+		*/
+		gesturesLockLeftTextureGUITexture.pixelInset.x = joystickLeftGOGUITexture.pixelInset.x - Screen.width * 0.063;
+		gesturesLockLeftTextureGUITexture.pixelInset.y = joystickLeftGOGUITexture.pixelInset.y - Screen.height * 0.07;
 
+		gesturesLockRightTextureGUITexture.pixelInset.x = joystickRightGOGUITexture.pixelInset.x - Screen.width * 0.126;
+		gesturesLockRightTextureGUITexture.pixelInset.y = joystickRightGOGUITexture.pixelInset.y - Screen.height * 0.07;
+		
+		
 	#else
 		motor.movementDirection = Input.GetAxis ("Horizontal") * screenMovementRight + Input.GetAxis ("Vertical") * screenMovementForward;
 	#endif

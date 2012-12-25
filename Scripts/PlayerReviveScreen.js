@@ -1,12 +1,17 @@
 #pragma strict
-private var JoystickRight : GameObject;
-private var JoystickLeft : GameObject;
 
 public var AutoFireComponent : GameObject;
 private var autoFireObj : AutoFire;
 
-public var gesturesRecognizer : GameObject;
+public var GesturesRecognizer : GameObject;
 
+public var PotionButtonsHUDS : GameObject[];
+
+public var ReviveScreen : GameObject;
+
+public var HUDs : GameObject;
+
+public var NGUIJoysticks : GameObject;
 
 function Awake()
 {
@@ -14,19 +19,27 @@ function Awake()
 }
 
 function OnReviveSignal()
-{
-	JoystickRight = GameObject.Find("Joystick Right");
-	JoystickLeft = GameObject.Find("Joystick Left");
+{	
+	HUDs.SetActiveRecursively(false);
+	NGUIJoysticks.SetActiveRecursively(false);
 	
-	gesturesRecognizer.active = false;
+	GesturesRecognizer.active = false;
 	
 	rigidbody.velocity = Vector3(0, 0, 0);
 	rigidbody.constraints = RigidbodyConstraints.FreezeAll;
 	autoFireObj.OnStopFire();
 	
-	JoystickRight.active = false;
-	JoystickLeft.active = false;
+	//iTween.CameraFadeAdd();
+	//iTween.CameraFadeTo(0.35, 1.2);
 	
-	iTween.CameraFadeAdd();
-	iTween.CameraFadeTo(0.35, 1.2);
+	/*
+	for(var i : int = 0; i < PotionButtonsHUDS.length; i++)
+	{
+		PotionButtonsHUDS[i].SetActiveRecursively(false);
+	}
+	*/
+	
+	ReviveScreen.SetActiveRecursively(true);
+	
+	
 }

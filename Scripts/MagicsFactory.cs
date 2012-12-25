@@ -30,6 +30,18 @@ class MagicsFactory : MonoBehaviour {
 	public GameObject ElectricityMagicVisualEffect;
 	public GameObject StarfallMagicVisualEffect;
 	public GameObject ShakeMagicVisualEffect;
+	public GameObject FallenRocksVisualEffect;
+	public GameObject WhirlMagicVisualEffect;
+	public GameObject FingerStunMagicVisualEffect;
+	public GameObject StaticChargeMagicVisualEffect;
+	public GameObject MagmaMagicVisualEffect;
+	public GameObject IceFallMagicVisualEffect;
+	public GameObject IceStunMagicVisualEffect;
+	public GameObject IceExplosionVisualEffect;
+	public GameObject LightningBallMagicVisualEffect;
+	public GameObject LightningBoltMagicVisualEffect;
+	public GameObject BerserkMagicVisualEffect;
+	
 	public AudioClip ShakeMagicSound;
 
 	public GameObject TornadoCheckpoint1;
@@ -38,7 +50,10 @@ class MagicsFactory : MonoBehaviour {
 
 	public GameObject MainCameraParentObject;
 
-
+	public GameObject SlaveGO;
+	
+	private Globals globals;
+	
 	public MagicsFactory()
 	{
 
@@ -71,6 +86,8 @@ class MagicsFactory : MonoBehaviour {
 	public void getMagicEffect(string name)
 	{		
 		string magicFullName = name + "MagicEffect";
+		
+		Debug.Log("Calling Magic " + magicFullName);
 		SendMessage(magicFullName);
 		/*
 		//Using reflection
@@ -109,8 +126,9 @@ class MagicsFactory : MonoBehaviour {
 		return (string)inGameMagicsTable[magicNumber];
 	}
 
-	private void LightningStrikeMagicEffect()
+	private IEnumerator LightningStrikeMagicEffect()
 	{
+		yield return new WaitForSeconds(0.8f);
 		//player = GameObject.FindWithTag("Player");
 		enemies = GameObject.FindGameObjectsWithTag("Enemy");
 		//for(int i = 0; i < (int)Random.Range(enemies.Length * 0.5f, enemies.Length); i++)
@@ -128,6 +146,8 @@ class MagicsFactory : MonoBehaviour {
 						{
 							enemyHealth.OnDamage(100, -enemies[i].transform.forward);	
 						}
+						yield return new WaitForSeconds(0.5f);
+
 					//enemyHealth.dieSignals.SendSignals(enemyHealth);
 				//}
 			//}
@@ -135,8 +155,9 @@ class MagicsFactory : MonoBehaviour {
 
 	}
 
-	private void HolyFireMagicEffect()
+	private IEnumerator HolyFireMagicEffect()
 	{
+		yield return new WaitForSeconds(0.8f);
 		enemies = GameObject.FindGameObjectsWithTag("Enemy");
 		//for(int i = 0; i < (int)Random.Range(enemies.Length * 0.5f, enemies.Length); i++)
 		for(int i = 0; i < enemies.Length; i++)
@@ -152,7 +173,6 @@ class MagicsFactory : MonoBehaviour {
 					
 					if(enemyHealth.health > 0 && enemies[i].GetComponent<NewAIFollowJavaScript>().isDead == false && enemyHealth.dead == false)
 					{
-						Debug.Log("Magic is running");
 						enemyHealth.OnDamage(100, -enemies[i].transform.forward);
 					}
 					
@@ -162,28 +182,89 @@ class MagicsFactory : MonoBehaviour {
 		}	
 	}
 
-	private void StunMagicEffect()
+	private IEnumerator StunMagicEffect()
 	{
-		//debugGUIText.text = "Stun!";
+		yield return new WaitForSeconds(0.8f);
 		enemies = GameObject.FindGameObjectsWithTag("Enemy");
+		globals.isEnemyStunned = true;
 		for(int i = 0; i < enemies.Length; i++)
 		{
 			enemies[i].GetComponent<NavMeshAgent>().Stop(true);
 
-			GameObject stuffEffect = Instantiate(StunMagicVisualEffect, new Vector3(enemies[i].gameObject.transform.position.x, enemies[i].gameObject.transform.position.y + 2, enemies[i].gameObject.transform.position.z), Quaternion.identity) as GameObject;
-			stuffEffect.transform.parent = enemies[i].gameObject.transform;
+			GameObject stunEffect = Instantiate(StunMagicVisualEffect, new Vector3(enemies[i].gameObject.transform.position.x, enemies[i].gameObject.transform.position.y + 2, enemies[i].gameObject.transform.position.z), Quaternion.identity) as GameObject;
+			//stunEffect.transform.parent = enemies[i].gameObject.transform;
 		}
-		//Invoke("DisableStunMagicEffect", 2);
-
-		
-	}
-	private void DisableStunMagicEffect()
-	{
+		yield return new WaitForSeconds(7.0f);
+		globals.isEnemyStunned = false;
 		for(int i = 0; i < enemies.Length; i++)
 		{
 			enemies[i].GetComponent<NavMeshAgent>().Resume();
 		}
+
+		
 	}
+
+	
+	private IEnumerator FingerStunMagicEffect()
+	{
+		yield return new WaitForSeconds(0.8f);
+		enemies = GameObject.FindGameObjectsWithTag("Enemy");
+		globals.isEnemyStunned = true;
+		for(int i = 0; i < enemies.Length; i++)
+		{
+			enemies[i].GetComponent<NavMeshAgent>().Stop(true);
+			GameObject fingerStunEffect = Instantiate(FingerStunMagicVisualEffect, new Vector3(enemies[i].gameObject.transform.position.x, enemies[i].gameObject.transform.position.y + 5, enemies[i].gameObject.transform.position.z), Quaternion.identity) as GameObject;
+			//fingerStunEffect.transform.parent = enemies[i].gameObject.transform;
+			
+			Health enemyHealth = enemies[i].transform.GetComponent<Health>();
+			if(enemyHealth.health > 0 && enemies[i].GetComponent<NewAIFollowJavaScript>().isDead == false && enemyHealth.dead == false)
+			{
+				enemyHealth.OnDamage(2, -enemies[i].transform.forward);	
+			}
+		}
+		
+		yield return new WaitForSeconds(5.0f);
+		globals.isEnemyStunned = false;
+		for(int i = 0; i < enemies.Length; i++)
+		{
+			enemies[i].GetComponent<NavMeshAgent>().Resume();
+		}
+		
+		
+	}
+	
+	private IEnumerator IceStunMagicEffect()
+	{
+		yield return new WaitForSeconds(0.8f);
+		enemies = GameObject.FindGameObjectsWithTag("Enemy");
+		globals.isEnemyStunned = true;
+		for(int i = 0; i < enemies.Length; i++)
+		{
+			enemies[i].GetComponent<NavMeshAgent>().Stop(true);
+
+			GameObject iceStunEffect = Instantiate(IceStunMagicVisualEffect, new Vector3(enemies[i].gameObject.transform.position.x, enemies[i].gameObject.transform.position.y, enemies[i].gameObject.transform.position.z), Quaternion.identity) as GameObject;
+			//stunEffect.transform.parent = enemies[i].gameObject.transform;
+		}
+		yield return new WaitForSeconds(7.0f);
+		globals.isEnemyStunned = false;
+		
+		for(int i = 0; i < enemies.Length; i++)
+		{
+			GameObject iceStunExplosion = Instantiate(IceExplosionVisualEffect, new Vector3(enemies[i].gameObject.transform.position.x, enemies[i].gameObject.transform.position.y + 4, enemies[i].gameObject.transform.position.z), Quaternion.identity) as GameObject;
+			enemies[i].GetComponent<NavMeshAgent>().Resume();
+		}
+	}
+	
+	private IEnumerator LightningBallMagicEffect()
+	{
+		yield return new WaitForSeconds(0.8f);
+		player = GameObject.FindWithTag("Player");
+		float playerRotation = player.transform.eulerAngles.y;
+		Debug.Log(playerRotation);
+		GameObject lightningBall = Instantiate(LightningBallMagicVisualEffect, new Vector3(TornadoCheckpoint1.transform.position.x, player.transform.position.y, TornadoCheckpoint1.transform.position.z), Quaternion.Euler(new Vector3(0, playerRotation, 0))) as GameObject;
+	
+	}
+	
 	private void FrenzyMagicEffect()
 	{
 		//debugGUIText.text = "Frenzy";
@@ -231,10 +312,11 @@ class MagicsFactory : MonoBehaviour {
 		freeMovementMotor.walkingSpeed = originalWalkingSpeed;
 	}
 
-	private void TornadoMagicEffect()
+	private IEnumerator TornadoMagicEffect()
 	{
+		yield return new WaitForSeconds(0.8f);
 		player = GameObject.FindWithTag("Player");
-		GameObject tornadoObj = Instantiate(TornadoMagicVisualEffect, player.transform.position, Quaternion.identity) as GameObject;
+		GameObject tornadoObj = Instantiate(TornadoMagicVisualEffect, new Vector3(player.transform.position.x, player.transform.position.y + 1, player.transform.position.z), Quaternion.identity) as GameObject;
 		
 		Vector3 firstPoint = TornadoCheckpoint1.transform.position;
 		Vector3 secondPoint = firstPoint + new Vector3(-5, 0, 6);
@@ -257,6 +339,7 @@ class MagicsFactory : MonoBehaviour {
 
 	private IEnumerator CrowstormMagicEffect()
 	{
+		yield return new WaitForSeconds(0.8f);
 		player = GameObject.FindWithTag("Player");
 		GameObject crowstormObj = Instantiate(CrowstormMagicVisualEffect, new Vector3(player.transform.position.x, player.transform.position.y + 1, player.transform.position.z), Quaternion.identity) as GameObject;
 		crowstormObj.name = "CrowstormGO";
@@ -280,8 +363,9 @@ class MagicsFactory : MonoBehaviour {
 		
 	}
 
-	private void DustStormMagicEffect()
+	private IEnumerator DustStormMagicEffect()
 	{
+		yield return new WaitForSeconds(0.8f);
 		enemies = GameObject.FindGameObjectsWithTag("Enemy");
 		//for(int i = 0; i < (int)Random.Range(enemies.Length * 0.5f, enemies.Length); i++)
 		for(int i = 0; i < enemies.Length; i++)
@@ -303,9 +387,35 @@ class MagicsFactory : MonoBehaviour {
 			//}
 		}
 	}
-
+	
+	private IEnumerator MagmaMagicEffect()
+	{
+		yield return new WaitForSeconds(0.8f);
+		enemies = GameObject.FindGameObjectsWithTag("Enemy");
+		//for(int i = 0; i < (int)Random.Range(enemies.Length * 0.5f, enemies.Length); i++)
+		for(int i = 0; i < enemies.Length; i++)
+		{
+			//if(MainCamera != null)
+			//{
+				//Vector3 enemyPositionInsideScreen = MainCamera.camera.WorldToScreenPoint(enemies[i].transform.position);
+				//if(enemyPositionInsideScreen.x > 0 && enemyPositionInsideScreen.x < Screen.width && enemyPositionInsideScreen.y > 0 && enemyPositionInsideScreen.y < Screen.height)
+				//{
+					Health enemyHealth = enemies[i].transform.GetComponent<Health>();
+					GameObject magmaObj = Instantiate(MagmaMagicVisualEffect, new Vector3(enemies[i].gameObject.transform.position.x, enemies[i].gameObject.transform.position.y + 3, enemies[i].gameObject.transform.position.z), Quaternion.identity) as GameObject;
+					magmaObj.transform.parent = enemies[i].gameObject.transform;
+					if(enemyHealth.health > 0 && enemies[i].GetComponent<NewAIFollowJavaScript>().isDead == false && enemyHealth.dead == false)
+					{
+						enemyHealth.OnDamage(100, -enemies[i].transform.forward);	
+					}
+					//enemyHealth.dieSignals.SendSignals(enemyHealth);
+				//}
+			//}
+		}
+	}
+	
 	private IEnumerator FireMagicEffect()
 	{
+		yield return new WaitForSeconds(0.8f);
 		player = GameObject.FindWithTag("Player");
 		Vector3 firstPoint = TornadoCheckpoint1.transform.position;
 		Vector3 secondPoint = firstPoint + new Vector3(-7, 0, 6);
@@ -332,6 +442,7 @@ class MagicsFactory : MonoBehaviour {
 
 	private IEnumerator ElectricityMagicEffect()
 	{
+		yield return new WaitForSeconds(0.8f);
 		player = GameObject.FindWithTag("Player");
 		Vector3 firstPoint = TornadoCheckpoint1.transform.position;
 		Vector3 secondPoint = firstPoint + new Vector3(-7, 0, 6);
@@ -355,9 +466,37 @@ class MagicsFactory : MonoBehaviour {
 			yield return new WaitForSeconds(0.4f);
 		}
 	}
+	
+	private IEnumerator StaticChargeMagicEffect()
+	{
+		yield return new WaitForSeconds(0.8f);
+		player = GameObject.FindWithTag("Player");
+		Vector3 firstPoint = TornadoCheckpoint1.transform.position;
+		Vector3 secondPoint = firstPoint + new Vector3(-7, 0, 6);
+		Vector3 thirdPoint = secondPoint + new Vector3(14, 0, 0);
+		Vector3 fourthPoint = thirdPoint + new Vector3(-11, 0, -3);
+		Vector3 fifthPoint = fourthPoint + new Vector3(5, 0, 6);
+		Vector3 sixthPoint = fifthPoint + new Vector3(2, 0, -6);
 
+		Vector3[] staticChargePoints = new Vector3[6];
+		staticChargePoints[0] = firstPoint;
+		staticChargePoints[1] = secondPoint;
+		staticChargePoints[2] = thirdPoint;
+		staticChargePoints[3] = fourthPoint;
+		staticChargePoints[4] = fifthPoint;
+		staticChargePoints[5] = sixthPoint;
+
+		for(int i = 0; i < staticChargePoints.Length; i++)
+		{
+			GameObject staticChargeObj = Instantiate(StaticChargeMagicVisualEffect, staticChargePoints[i], Quaternion.identity) as GameObject;
+			staticChargeObj.transform.parent = player.transform;
+			yield return new WaitForSeconds(0.4f);
+		}
+	}
+	
 	private IEnumerator StarfallMagicEffect()
 	{
+		yield return new WaitForSeconds(0.8f);
 		enemies = GameObject.FindGameObjectsWithTag("Enemy");
 
 		//for(int i = 0; i < (int)Random.Range(enemies.Length * 0.5f, enemies.Length); i++)
@@ -378,11 +517,38 @@ class MagicsFactory : MonoBehaviour {
 					//enemyHealth.dieSignals.SendSignals(enemyHealth);
 				//}
 			//}
-			yield return new WaitForSeconds(0.4f);
+			yield return new WaitForSeconds(0.25f);
 		}
-
 	}
+	
+	private IEnumerator LightningBoltMagicEffect()
+	{
+		yield return new WaitForSeconds(0.8f);
+		enemies = GameObject.FindGameObjectsWithTag("Enemy");
 
+		//for(int i = 0; i < (int)Random.Range(enemies.Length * 0.5f, enemies.Length); i++)
+		for(int i = 0; i < enemies.Length; i++)
+		{
+			//if(MainCamera != null)
+			//{
+				//Vector3 enemyPositionInsideScreen = MainCamera.camera.WorldToScreenPoint(enemies[i].transform.position);
+				//if(enemyPositionInsideScreen.x > 0 && enemyPositionInsideScreen.x < Screen.width && enemyPositionInsideScreen.y > 0 && enemyPositionInsideScreen.y < Screen.height)
+				//{
+					Health enemyHealth = enemies[i].transform.GetComponent<Health>();
+					GameObject lightningBoltObj = Instantiate(LightningBoltMagicVisualEffect, new Vector3(enemies[i].gameObject.transform.position.x, enemies[i].gameObject.transform.position.y + 25, enemies[i].gameObject.transform.position.z), Quaternion.identity) as GameObject;
+					
+					if(enemyHealth.health > 0 && enemies[i].GetComponent<NewAIFollowJavaScript>().isDead == false && enemyHealth.dead == false)
+					{
+						enemyHealth.OnDamage(100, -enemies[i].transform.forward);	
+					}
+					//enemyHealth.dieSignals.SendSignals(enemyHealth);
+				//}
+			//}
+			yield return new WaitForSeconds(0.25f);
+		}
+	}
+	
+	
 	private void ScrubsMagicEffect()
 	{
 
@@ -396,10 +562,20 @@ class MagicsFactory : MonoBehaviour {
 		audio.PlayOneShot(ShakeMagicSound);
 		player = GameObject.FindWithTag("Player");
 
-		GameObject shakeObj = Instantiate(ShakeMagicVisualEffect, new Vector3(player.transform.position.x, player.transform.position.y + 3, player.transform.position.z), Quaternion.identity) as GameObject;
-
 		enemies = GameObject.FindGameObjectsWithTag("Enemy");
-
+		
+		for(int j = 0; j < 20; j++)
+		{
+			GameObject fallenRocksObj = Instantiate(FallenRocksVisualEffect, new Vector3(player.transform.position.x + Random.Range(-50, 50), player.transform.position.y + Random.Range(0, 25), player.transform.position.z + Random.Range(-50, 50)), Quaternion.Euler(0, 0, -90)) as GameObject;
+			fallenRocksObj.GetComponent<FallingRocks>().translationSpeedX = Random.Range(7, 10);
+		}
+		
+		for(int j = 0; j < 20; j++)
+		{
+			GameObject fallenRocksObj = Instantiate(FallenRocksVisualEffect, new Vector3(player.transform.position.x + Random.Range(-50, 50), player.transform.position.y + Random.Range(26, 50), player.transform.position.z + Random.Range(-50, 50)), Quaternion.Euler(0, 0, -90)) as GameObject;
+			fallenRocksObj.GetComponent<FallingRocks>().translationSpeedX = Random.Range(7, 10);
+		}
+		
 		for(int i = 0; i < enemies.Length; i++)
 		{
 			//if(MainCamera != null)
@@ -408,8 +584,10 @@ class MagicsFactory : MonoBehaviour {
 				//if(enemyPositionInsideScreen.x > 0 && enemyPositionInsideScreen.x < Screen.width && enemyPositionInsideScreen.y > 0 && enemyPositionInsideScreen.y < Screen.height)
 				//{
 					Health enemyHealth = enemies[i].transform.GetComponent<Health>();
-					//GameObject starfallObj = Instantiate(ShakeMagicVisualEffect, new Vector3(enemies[i].gameObject.transform.position.x, enemies[i].gameObject.transform.position.y + 3, enemies[i].gameObject.transform.position.z), Quaternion.identity) as GameObject;
+					GameObject starfallObj = Instantiate(ShakeMagicVisualEffect, new Vector3(enemies[i].gameObject.transform.position.x, enemies[i].gameObject.transform.position.y + 3, enemies[i].gameObject.transform.position.z), Quaternion.identity) as GameObject;
+					
 					//starfallObj.transform.parent = enemies[i].gameObject.transform;
+
 					if(enemyHealth.health > 0 && enemies[i].GetComponent<NewAIFollowJavaScript>().isDead == false && enemyHealth.dead == false)
 					{
 						enemyHealth.OnDamage(100, -enemies[i].transform.forward);	
@@ -419,13 +597,84 @@ class MagicsFactory : MonoBehaviour {
 			//}
 			yield return new WaitForSeconds(0.4f);
 		}
-		
-
 	}
+	
+	private IEnumerator SlaveMagicEffect()
+	{
+		yield return new WaitForSeconds(0.8f);
+		player = GameObject.FindWithTag("Player");
 
+		SlaveGO.SetActiveRecursively(true);
+		SlaveGO.GetComponent<AddTimerUnitHUD>().enabled = true;
+		SlaveGO.transform.position = new Vector3(player.transform.position.x + 4, player.transform.position.y, player.transform.position.z + 4);
+		SlaveGO.transform.rotation = player.transform.rotation;
+	}
+	
+	private IEnumerator WhirlMagicEffect()
+	{
+		yield return new WaitForSeconds(0.8f);
+		player = GameObject.FindWithTag("Player");
+		Vector3 firstPoint = TornadoCheckpoint1.transform.position;
+		Vector3 secondPoint = firstPoint + new Vector3(-7, 0, 12);
+		Vector3 thirdPoint = secondPoint + new Vector3(17, 0, 0);
+		Vector3 fourthPoint = thirdPoint + new Vector3(-23, 0, -9);
+		Vector3 fifthPoint = fourthPoint + new Vector3(15, 0, 12);
+		Vector3 sixthPoint = fifthPoint + new Vector3(12, 0, -12);
+
+		Vector3[] whirlPoints = new Vector3[6];
+		whirlPoints[0] = firstPoint;
+		whirlPoints[1] = secondPoint;
+		whirlPoints[2] = thirdPoint;
+		whirlPoints[3] = fourthPoint;
+		whirlPoints[4] = fifthPoint;
+		whirlPoints[5] = sixthPoint;
+
+		for(int i = 0; i < whirlPoints.Length; i++)
+		{
+			GameObject whirlObj = Instantiate(WhirlMagicVisualEffect, whirlPoints[i], Quaternion.identity) as GameObject;
+			//whirlObj.transform.parent = player.transform;
+			yield return new WaitForSeconds(0.4f);
+		}
+	}
+	
+	private IEnumerator IceFallMagicEffect()
+	{
+		yield return new WaitForSeconds(0.8f);
+		//player = GameObject.FindWithTag("Player");
+		Vector3 firstPoint = TornadoCheckpoint1.transform.position;
+		Vector3 secondPoint = firstPoint + new Vector3(-7, 0, 12);
+		Vector3 thirdPoint = secondPoint + new Vector3(17, 0, 0);
+		Vector3 fourthPoint = thirdPoint + new Vector3(-23, 0, -9);
+		Vector3 fifthPoint = fourthPoint + new Vector3(15, 0, 12);
+		Vector3 sixthPoint = fifthPoint + new Vector3(12, 0, -12);
+
+		Vector3[] IceFallPoints = new Vector3[6];
+		IceFallPoints[0] = firstPoint;
+		IceFallPoints[1] = secondPoint;
+		IceFallPoints[2] = thirdPoint;
+		IceFallPoints[3] = fourthPoint;
+		IceFallPoints[4] = fifthPoint;
+		IceFallPoints[5] = sixthPoint;
+
+		for(int i = 0; i < IceFallPoints.Length; i++)
+		{
+			GameObject iceFallObj = Instantiate(IceFallMagicVisualEffect, IceFallPoints[i] + new Vector3(0, 33, 0), Quaternion.identity) as GameObject;
+			//iceFallObj.transform.parent = player.transform;
+			yield return new WaitForSeconds(0.4f);
+		}
+	}
+	
+	private IEnumerator BerserkMagicEffect()
+	{
+		yield return new WaitForSeconds(0.8f);
+		player = GameObject.FindWithTag("Player");
+		GameObject berserkObj = Instantiate(BerserkMagicVisualEffect, new Vector3(player.transform.position.x, player.transform.position.y + 2, player.transform.position.z), Quaternion.identity) as GameObject;
+		berserkObj.transform.parent = player.transform;
+	}
+	
 	void Awake()
 	{
-
+		globals = Globals.GetInstance();
 	}
 
 	// Use this for initialization

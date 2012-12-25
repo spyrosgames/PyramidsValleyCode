@@ -1,3 +1,4 @@
+#pragma strict
 class EnemyHitFlashing extends Health
 {
 	public var enemyMesh : GameObject;

@@ -8,7 +8,6 @@ public var behaviourOnSpotted : MonoBehaviour[];
 // Private memeber data
 private var character : Transform;
 private var player : Transform;
-private var raaFighter : Transform;
 private var playerHealth : Health;
 private var mode : String;
 
@@ -27,6 +26,10 @@ function Awake () {
 	else if(this.gameObject.name == "RangedEnemy")
 	{
 		mode = "Ranged";
+	}
+	else if(this.gameObject.name == "Antagonist")
+	{
+		mode = "Antagonist";
 	}
 }
 
@@ -59,7 +62,13 @@ function OnSpotted () {
 		}	
 		behaviourOnSpotted[0].enabled = false;
 	}
-
+	else if(mode == "Antagonist")
+	{
+		if (!behaviourOnSpotted[0].enabled) {
+			behaviourOnSpotted[0].enabled = true;
+		}
+		behaviourOnSpotted[1].enabled = false;
+	}
 	/*
 	if (audio && soundOnSpotted) {
 		audio.clip = soundOnSpotted;
@@ -78,7 +87,7 @@ function CanSeePlayer () : boolean {
 	
 	Physics.Raycast (character.position, playerDirection, hit, playerDirection.magnitude);
 
-	if (hit.collider && hit.collider.transform == player && hit.distance <= globals.rangedEnemyAIStoppingDistance) {   //We choose the hit.distance <= maximum of the ranged and melee stopping distances
+	if (hit.collider && hit.collider.transform == player && hit.distance <= globals.antagonistAIStoppingDistance) {   //We choose the hit.distance <= maximum of the ranged and melee stopping distances
 		return true;
 	}
 	return false;

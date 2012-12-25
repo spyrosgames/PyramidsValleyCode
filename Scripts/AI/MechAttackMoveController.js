@@ -25,10 +25,15 @@ private var lastFireTime : float = -1;
 private var nextWeaponToFire : int = 0;
 
 private var playerDirection : Vector3;
-public var enemyBody : GameObject;
 
-public var idleAnimation : AnimationClip;
 private var globals : Globals;
+
+public var rangedEnemyMesh : GameObject;
+
+public var shootingAnimation : AnimationClip;
+public var idleAnimation : AnimationClip;
+
+private var animationSpeed : float = 0.3;
 
 function Awake () {
 	globals = Globals.GetInstance();
@@ -41,7 +46,6 @@ function Awake () {
 
 function OnEnable () {
 	inRange = false;
-	//pyramidInRange = false;
 	nextRaycastTime = Time.time + 1;
 	lastRaycastSuccessfulTime = Time.time;
 	noticeTime = Time.time;
@@ -50,17 +54,15 @@ function OnEnable () {
 function OnDisable () {
 	Shoot(false);
 }
-/*
-function OnSignal()
-{
-	Shoot(false);
-}
-*/
+
 function Shoot(state : boolean) {
 	firing = state;
 }
 
 function Fire () {
+
+	PlayAttackAnimation();
+
 	//Play the ranged enemy attack animation here
 	if (weaponBehaviours[nextWeaponToFire]) {
 		weaponBehaviours[nextWeaponToFire].SendMessage ("Fire");
@@ -103,12 +105,6 @@ function Update () {
 		}
 	//}
 
-	/*
-	if(inRange && pyramidDist > targetDistanceMax)
-		inRange = false;
-	if(!inRange && pyramidDist < targetDistanceMin)
-		inRange = true;
-	*/
 
 	if (inRange)
 	{
@@ -124,7 +120,7 @@ function Update () {
 			//if (ai.CanSeePlayer ()) {
 				
 				//lastRaycastSuccessfulTime = Time.time;
-				if (IsAimingAtPlayer ())
+				if (IsAimingAtPlayer () && globals.isEnemyStunned == false && playerHealth.dead == false && this.transform.parent.gameObject.rigidbody.velocity == Vector3(0, 0, 0))
 				{
 					Shoot(true);
 				}
@@ -139,23 +135,67 @@ function Update () {
 	//}
 	
 	if (firing) {
-		if(playerHealth.health > 0 && transform.parent.GetComponent.<Health>().health > 0)
+		if(playerHealth.dead == false && transform.parent.GetComponent.<Health>().dead == false)
 		{
 			if (Time.time > lastFireTime + 1 / fireFrequency) {
 				Fire ();
 			}
+			else
+			{
+				if(this.transform.parent.transform.name == "RangedEnemy")
+				{
+					rangedEnemyMesh.animation.CrossFadeQueued(shootingAnimation.name, 0.1);
+				}
+			}
 		}
+		else
+		{
+			if(this.transform.parent.transform.name == "RangedEnemy")
+			{
+				rangedEnemyMesh.animation.CrossFadeQueued(idleAnimation.name, 0.1);
+			}
+		}
+	}
+	else
+	{
+		if(this.transform.parent.transform.name == "RangedEnemy")
+		{
+			rangedEnemyMesh.animation.CrossFadeQueued(idleAnimation.name, 0.1);	
+		}	
 	}
 }
 
 function IsAimingAtPlayer () : boolean {
 	
 	var distance : float = Vector3.Distance(player.transform.position, character.transform.position);
-	if(distance < globals.rangedEnemyAIStoppingDistance)
+	if(this.transform.parent.transform.name == "RangedEnemy")
 	{
-		Debug.Log("I'm the ranged enemy and I'll attack the player now");
-		return true;
+		if(distance <= globals.rangedEnemyAIStoppingDistance) 
+		{
+			Debug.Log("I'm the " + gameObject.transform.parent.name + " and I'll attack the player now");
+			return true;
+		}
 	}
-	
+	if(this.transform.parent.transform.name == "Antagonist")
+	{
+		if(distance <= globals.antagonistAIStoppingDistance) 
+		{
+			Debug.Log("I'm the " + gameObject.transform.parent.name + " and I'll attack the player now");
+			return true;
+		}
+	}
 	return false;
+}
+
+function PlayAttackAnimation()
+{
+	if(this.transform.parent.transform.name == "RangedEnemy")
+	{
+		rangedEnemyMesh.animation.CrossFade(shootingAnimation.name, 0.2);
+		rangedEnemyMesh.animation[shootingAnimation.name].speed = animationSpeed;
+	}
+	if(this.transform.parent.transform.name == "Antagonist")
+	{
+	
+	}	
 }

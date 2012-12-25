@@ -109,13 +109,21 @@ function OnDamageSignal () {
 	{
 		XPLabel = Spawner.Spawn(FourXPLabelToSpawn, Vector3(screenPosition.x / 480, screenPosition.y / 320, 0), transform.rotation);
 		globals.XPPoints += 4;
+		PlayerPrefs.SetFloat("XP", globals.XPPoints);
 	}
 	else if(this.transform.parent.gameObject.name == "BigRangedEnemy" || this.transform.parent.gameObject.name == "BigMeleeEnemy")
 	{
 		XPLabel = Spawner.Spawn(EightXPLabelToSpawn, Vector3(screenPosition.x / 480, screenPosition.y / 320, 0), transform.rotation);
 		globals.XPPoints += 8;
+		PlayerPrefs.SetFloat("XP", globals.XPPoints);
 	}
-
+	else if(this.transform.parent.gameObject.name == "Antagonist")
+	{
+		XPLabel = Spawner.Spawn(EightXPLabelToSpawn, Vector3(screenPosition.x / 480, screenPosition.y / 320, 0), transform.rotation);
+		globals.XPPoints += 8;
+		PlayerPrefs.SetFloat("XP", globals.XPPoints);	
+	}
+	
 	if (onDestroyedSignals.receivers.Length > 0)
 	{
 		enabled = true;
@@ -221,12 +229,15 @@ function OnDamageSignal () {
 			enemyReviveEffectGO.transform.parent = transform.parent.gameObject.transform;
 
 			//this.transform.parent.gameObject.SetActiveRecursively(true);
+			
 			this.transform.parent.gameObject.GetComponent.<NewAIFollowJavaScript>().isDead = false;
 			this.transform.parent.gameObject.GetComponent.<Health>().dead = false;
 			this.transform.parent.gameObject.GetComponent.<Health>().onlyOnce = true;
 			var enemyMaxHealth2 = this.transform.parent.gameObject.GetComponent.<Health>().maxHealth;
 			this.transform.parent.gameObject.GetComponent.<Health>().health = enemyMaxHealth2;
+			
 			yield WaitForSeconds(Random.Range(0.5, 1));
+			
 			this.transform.parent.gameObject.GetComponent.<NavMeshAgent>().Resume();
 			
 		}
@@ -250,6 +261,16 @@ function OnDamageSignal () {
 		Destroy(this.transform.parent.gameObject); //Destroy Medium and Big enemies.
 		yield WaitForSeconds(2);//Wait to seconds before destroying the death particles
 		Destroy(spawned);//Destroy the enemy death particles
+	}
+	else if(this.transform.parent.gameObject.name == "Antagonist")
+	{
+		yield WaitForSeconds(2);
+		this.transform.parent.gameObject.SetActiveRecursively(false);
+	}
+	else if(this.transform.parent.gameObject.name == "Slave")
+	{
+		yield WaitForSeconds(8);
+		this.transform.parent.gameObject.SetActiveRecursively(false);
 	}
 }
 function OnGUI()

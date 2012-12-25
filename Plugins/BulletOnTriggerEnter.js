@@ -36,7 +36,9 @@ function OnTriggerEnter(other : Collider)
 		if (targetHealth && targetHealth.health > 0 && targetHealth.dead == false) {
 			// Apply damage
 			//targetHealth.OnDamage (damagePerSecond / frequency, -spawnPoint.forward);
-			targetHealth.OnDamage (damagePerSecond / frequency, other.transform.forward);
+			//targetHealth.OnDamage (damagePerSecond / frequency, other.transform.forward);
+			targetHealth.OnDamage (damagePerSecond, other.transform.forward);
+
 		}
 		Debug.Log("Hi, I'm a bullet and I've hit an enemy");	
 	}

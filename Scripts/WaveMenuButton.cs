@@ -7,7 +7,14 @@ public class WaveMenuButton : MonoBehaviour {
 	void OnClick()
 	{
 		PlayerPrefs.SetInt("WaveNumber", waveNumber);
-		PlayerPrefs.SetString("LoadLevel", "Bondo2Scene");
+		if(waveNumber != 1)
+		{
+			PlayerPrefs.SetString("LoadLevel", "Bondo2Scene");
+		}
+		else if(waveNumber == 1)
+		{
+			PlayerPrefs.SetString("LoadLevel", "ComicsScene");
+		}
 		Application.LoadLevel("Loading");
 	}
 }

@@ -1,13 +1,17 @@
 function OnParticleCollision(other : GameObject)
 {
-	var body : Rigidbody = other.rigidbody;
-
-	if(body)
+	//Debug.Log("Particles are killing enemies.");
+	if(other.transform.tag == "Enemy")
 	{
-		var direction : Vector3 = other.transform.position - transform.position;
-		direction = direction.normalized;
-		body.AddForce(direction * 5);
-		var enemyHealth : Health = other.transform.GetComponent.<Health>();
-		enemyHealth.OnDamage(100, -body.transform.forward);
+		var body : Rigidbody = other.rigidbody;
+	
+		if(body)
+		{
+			var direction : Vector3 = other.transform.position - transform.position;
+			direction = direction.normalized;
+			body.AddForce(direction * 5);
+			var enemyHealth : Health = other.transform.GetComponent.<Health>();
+			enemyHealth.OnDamage(100, -body.transform.forward);
+		}
 	}
 }

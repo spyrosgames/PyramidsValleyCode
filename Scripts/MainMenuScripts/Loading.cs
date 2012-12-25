@@ -18,7 +18,7 @@ public class Loading : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		loadingSlider.sliderValue = (asyncOperation.progress) / 100;
+		loadingSlider.sliderValue = (asyncOperation.progress);
 		Debug.Log("asyncOperation.progress = " + asyncOperation.progress + " ,loadingSlider.sliderValue" + loadingSlider.sliderValue);	
 	}
 	

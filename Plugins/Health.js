@@ -26,6 +26,8 @@ private var colliderRadiusHeuristic : float = 1.0;
 public var onlyOnce : boolean = true;
 private var globals : Globals;
 
+public var showHealthBar : boolean = false;  //For objects that have healthbar above it
+
 function Awake () {
 	enabled = false;
 	globals = Globals.GetInstance();
@@ -48,6 +50,16 @@ function Awake () {
 			PlayerPrefs.SetFloat("playerHealthRegenerationSpeed", 0.1);
 		}
 	}
+	if(this.transform.tag == "Slave")
+	{
+		maxHealth = globals.slaveMaxHealth;
+		if(maxHealth == 0)
+		{
+			maxHealth = 100;
+			globals.slaveMaxHealth = 100;
+			PlayerPrefs.SetFloat("slaveMaxHealth", 100);
+		}
+	}
 	if(this.transform.name == "MeleeEnemy")
 	{
 		maxHealth = globals.meleeEnemyMaxHealth;
@@ -66,6 +78,15 @@ function Awake () {
 			maxHealth = 20;
 			globals.rangedEnemyMaxHealth = 20;
 			//PlayerPrefs.SetInt("rangedEnemyMaxHealth", 20);
+		}
+	}
+	if(this.transform.name == "Antagonist")
+	{
+		maxHealth = globals.antagonistMaxHealth;
+		if(maxHealth == 0)
+		{
+			maxHealth = 200;
+			globals.antagonistMaxHealth = 200;
 		}
 	}
 	
@@ -91,7 +112,7 @@ function Awake () {
 
 
 function OnDamage (amount : float, fromDirection : Vector3) {
-	Debug.Log("Calling OnDamage");
+	showHealthBar = true;
 	// Take no damage if invincible, dead, or if the damage is zero
 	if(invincible)
 		return;
@@ -146,7 +167,7 @@ function OnDamage (amount : float, fromDirection : Vector3) {
 	if (health <= 0) {
 		if(onlyOnce)
 		{
-		Debug.Log("Hi I'm dead");
+		Debug.Log("Hi I'm " + gameObject.transform.name + " and I'm dead");
 		health = 0;
 		dead = true;
 		dieSignals.SendSignals (this);
@@ -181,7 +202,7 @@ function OnEnable () {
 function Regenerate () {
 	if (regenerateSpeed > 0.0f) {
 		while (enabled) {
-			if (Time.time > lastDamageTime + 3) {
+			//if (Time.time > lastDamageTime + 3) {
 				health += regenerateSpeed;
 				
 				yield;
@@ -190,7 +211,7 @@ function Regenerate () {
 					health = maxHealth;
 					enabled = false;
 				}
-			}
+			//}
 			yield WaitForSeconds (1.0f);
 		}
 	}

@@ -19,7 +19,7 @@ function Awake()
 
 function OnTriggerEnter(other : Collider)
 {
-	if(other.transform.tag == "Player")
+	if(other.transform.tag == "Player" || other.transform.tag == "Slave")
 	{
 		var targetHealth : Health = other.transform.GetComponent.<Health>();
 		if (targetHealth && targetHealth.health > 0 && targetHealth.dead == false) {
@@ -28,6 +28,6 @@ function OnTriggerEnter(other : Collider)
 			targetHealth.OnDamage (damageAmount, other.transform.forward);
 			simpleBulletObject.dist = 0;
 		}
-		Debug.Log("Hi, I'm a ranged bullet and I've hit the player");
+		Debug.Log("Hi, I'm a ranged bullet and I've hit the " + other.transform.tag);
 	}
 }

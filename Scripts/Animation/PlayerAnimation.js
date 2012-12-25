@@ -68,6 +68,8 @@ private var lastAnimTime : float = 0;
 public var animationComponent : Animation;
 private var firing : boolean = false;
 
+private var isMagicPlaying : boolean = false;
+
 function Awake () {
 	tr = rigid.transform;
 	lastPosition = tr.position;
@@ -162,8 +164,8 @@ function FixedUpdate () {
 }
 
 function Update () {
-	idleWeight = Mathf.Lerp (idleWeight, Mathf.InverseLerp (minWalkSpeed, maxIdleSpeed, speed), Time.deltaTime * 10);
-	animationComponent[idle.name].weight = idleWeight;
+	//idleWeight = Mathf.Lerp (idleWeight, Mathf.InverseLerp (minWalkSpeed, maxIdleSpeed, speed), Time.deltaTime * 10);
+	//animationComponent[idle.name].weight = idleWeight;
 
 	if(rigid.velocity == Vector3(0, 0, 0))
 	{
@@ -208,37 +210,37 @@ function Update () {
 	*/
 	if(transform.parent.GetComponent.<Health>().health > 0)
 	{
-	if(speed > 0 && firing == false) //walking, and no firing
-	{
-		animationComponent.CrossFade(run.name);
-		animationComponent[run.name].wrapMode = WrapMode.Loop;
-	}
-	else if(speed == 0 && firing == false) //no firing, no walking
-	{	
-		animationComponent.CrossFade(idle.name, 0.1, PlayMode.StopAll);
-		animationComponent[idle.name].wrapMode = WrapMode.Loop;
-
-	}
-	else if(speed == 0 && firing == true) //firing when the player is standstill
-	{
-		Debug.Log("Player Speed" + speed);
-		Debug.Log("firing when the player is standstill");
-		animationComponent[forwardAim.name].enabled = false;
-		animationComponent.CrossFade(shootAdditive.name, 0.01, PlayMode.StopAll);
-		//animationComponent[shootAdditive.name].wrapMode = WrapMode.ClampForever;
-	}
-	else if(speed > 0 && firing == true)
-	{
-		Debug.Log("firing when the player is walking");
-		animationComponent[shootAdditive.name].enabled = false;
-
-		CheckPlayerDirection();
-	}
+		if(speed > 0 && firing == false) //walking, and no firing
+		{
+			animationComponent.CrossFade(run.name);
+			animationComponent[run.name].wrapMode = WrapMode.Loop;
+		}
+		else if(speed == 0 && firing == false && isMagicPlaying == false) //no firing, no walking
+		{	
+			animationComponent.CrossFade(idle.name, 0.1, PlayMode.StopAll);
+			animationComponent[idle.name].wrapMode = WrapMode.Loop;
 	
+		}
+		else if(speed == 0 && firing == true) //firing when the player is standstill
+		{
+			Debug.Log("Player Speed" + speed);
+			Debug.Log("firing when the player is standstill");
+			animationComponent[forwardAim.name].enabled = false;
+			animationComponent.CrossFade(shootAdditive.name, 0.01, PlayMode.StopAll);
+			//animationComponent[shootAdditive.name].wrapMode = WrapMode.ClampForever;
+		}
+		else if(speed > 0 && firing == true)
+		{
+			Debug.Log("firing when the player is walking");
+			animationComponent[shootAdditive.name].enabled = false;
+	
+			CheckPlayerDirection();
+		}
 	}
 	else
 	{
 		animationComponent.CrossFade(death.name, 0.1, PlayMode.StopAll);
+		animationComponent[death.name].speed = 0.33;
 		animationComponent[death.name].wrapMode = WrapMode.ClampForever;
 	}
 
@@ -391,9 +393,12 @@ static function HorizontalAngle (direction : Vector3) {
 function OnMagic()
 {
 	Debug.Log("OnMagicCalled");
-	//animationComponent.Play(magic.name);
+	isMagicPlaying = true;
 	animationComponent.CrossFade(magic.name, 0.1, PlayMode.StopAll);
-	animationComponent[magic.name].speed = 0.1;
+	animationComponent[magic.name].speed = 1;
+
 	animationComponent[magic.name].blendMode = AnimationBlendMode.Blend;
-	
+	yield WaitForSeconds(animationComponent[magic.name].length * 1.8);
+	Debug.Log(animationComponent[magic.name].length);
+	isMagicPlaying = false;
 }

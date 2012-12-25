@@ -138,7 +138,7 @@ function Update () {
 		//nextRaycastTime = Time.time + 1;
 			if (ai.CanSeePlayer()) {
 				lastRaycastSuccessfulTime = Time.time;
-				if (IsAimingAtPlayer ())
+				if (IsAimingAtPlayer () && globals.isEnemyStunned == false)
 				{
 					currentCharacterToAttack = player;
 					Shoot(true);
@@ -156,7 +156,7 @@ function Update () {
 	//}
 	
 	if (firing) {
-		if(playerHealth.health > 0 && transform.parent.GetComponent.<Health>().health > 0)
+		if(playerHealth.dead == false && transform.parent.GetComponent.<Health>().dead == false)
 		{
 			if (Time.time > lastFireTime + 1 / fireFrequency) {
 				
@@ -172,6 +172,10 @@ function Update () {
 			enemyBody.animation.CrossFadeQueued(idleAnimation.name, 0);
 		}
 	}
+	else
+	{
+		enemyBody.animation.CrossFadeQueued(idleAnimation.name, 0);
+	}
 }
 function SmoothLookAt()
 {
@@ -182,7 +186,7 @@ function SmoothLookAt()
 function IsAimingAtPlayer () : boolean {	
 	var distance : float = Vector3.Distance(player.transform.position, character.transform.position);
 	
-	if(distance < globals.meleeEnemyAIStoppingDistance)
+	if(distance <= globals.meleeEnemyAIStoppingDistance)
 	{
 		return true;
 	}
@@ -194,24 +198,24 @@ function PlayAttackAnimation()
 {
 		if(player.rigidbody.velocity == Vector3(0, 0, 0))
 		{
-		var randomAnimation : int = Random.Range(0, 2);
-		currentAttackAnimation = strike1Animation; //default value
-		//enemyBody.animation[currentAttackAnimation.name].blendMode = AnimationBlendMode.Blend;
-		var animationSpeed : float;
-	
-	
-		if(randomAnimation == 0)
-		{
-			currentAttackAnimation = strike1Animation;
-			animationSpeed = 0.9;
-			//animationSpeed = 1.2;
-		}
-		else if(randomAnimation == 1)
-		{
-			currentAttackAnimation = strike2Animation;
-			animationSpeed = 0.95;
-			//animationSpeed = 1.25;
-		}
+			var randomAnimation : int = Random.Range(0, 2);
+			currentAttackAnimation = strike1Animation; //default value
+			//enemyBody.animation[currentAttackAnimation.name].blendMode = AnimationBlendMode.Blend;
+			var animationSpeed : float;
+		
+		
+			if(randomAnimation == 0)
+			{
+				currentAttackAnimation = strike1Animation;
+				animationSpeed = 0.9;
+				//animationSpeed = 1.2;
+			}
+			else if(randomAnimation == 1)
+			{
+				currentAttackAnimation = strike2Animation;
+				animationSpeed = 0.95;
+				//animationSpeed = 1.25;
+			}
 		}
 		if(player.rigidbody.velocity != Vector3(0, 0, 0))
 		{
@@ -219,7 +223,7 @@ function PlayAttackAnimation()
 			animationSpeed = 0.9;
 		}
 
-	enemyBody.animation.CrossFade(currentAttackAnimation.name, 0, PlayMode.StopAll);
+	enemyBody.animation.CrossFade(currentAttackAnimation.name, 0.2);
 	enemyBody.animation[currentAttackAnimation.name].speed = animationSpeed;
 }
 

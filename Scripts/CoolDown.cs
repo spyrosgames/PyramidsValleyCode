@@ -23,8 +23,8 @@ public class CoolDown : MonoBehaviour {
 		magicCoolDown = globals.magicCoolDown;
 		if(magicCoolDown == 0)
 		{
-			magicCoolDown = 10;
-			globals.magicCoolDown = 10;
+			magicCoolDown = 5;
+			globals.magicCoolDown = 5;
 			PlayerPrefs.SetFloat("magicCoolDown", magicCoolDown);
 		}
 	}
